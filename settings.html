@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+    <meta charset="utf-8" name="viewport" content="width=device-width">
+    <title>Tetris Settings</title>
+    <link rel="stylesheet" href="css/high-scores.css">
+</head>
+
+<body>
+
+    <div class="settings">
+        <label>Move Left: <input type="text" id="left" readonly></label>
+        <label>Move Right: <input type="text" id="right" readonly></label>
+        <label>Soft Drop: <input type="text" id="down" readonly></label>
+        <label>Hard Drop: <input type="text" id="hard" readonly></label>
+        <label>Rotate Clockwise: <input type="text" id="clockwise" readonly></label>
+        <label>Rotate Counter Clockwise: <input type="text" id="counterClockwise" readonly></label>
+        <label>Board Colour: <input type="color" id="backgroundColour"></label>
+        <div id="clickable">
+            <button onclick="resetSettings()">Reset Settings</button>
+            <a href="index.html">&lt Back to Menu</a>
+        </div>
+    </div>
+
+    <script src="js/settings.js"></script>
+
+</body>
+
+</html>

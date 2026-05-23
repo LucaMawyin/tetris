@@ -1,0 +1,130 @@
+@import url('https://fonts.cdnfonts.com/css/tetris');
+
+@font-face {
+    font-family: 'Pixel';
+    src: url('tetris.ttf');
+}
+
+:root{
+    font-family: 'Pixel', 'Tetris', sans-serif;
+    cursor: default;
+    user-select: none;
+    touch-action: manipulation;
+}
+
+html,body{
+    height: 100%;
+    width: 100%;
+    margin: 0;
+    background-image: url("../images/tetris-background.jpg");
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#title span:nth-child(1){color: red;}
+#title span:nth-child(2){color: orange;}
+#title span:nth-child(3){color: yellow;}
+#title span:nth-child(4){color: green;}
+#title span:nth-child(5){color: blue;}
+#title span:nth-child(6){color: purple;}
+
+#title{
+    text-shadow: 5px 0 black;
+    font-size: 5vw;
+    transition: ease-in 0.1s;
+    margin: 0;
+}
+
+.content{
+    width: max-content;
+    max-width: 25%;
+    height: max-content;
+
+    background-color: white;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 3%;
+}
+
+.content a{
+    display: flex;
+    text-decoration: none;
+    color: black;
+    margin: 1%;
+    font-size: 2vw;
+    text-align: center;
+    transition: ease 0.2s;
+    cursor: pointer;
+}
+
+.content a:hover{
+    scale: 0.9;
+}
+
+#player-info{
+    font-size: 1.5vw;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+#player-info input{
+    font-family: 'Pixel', sans-serif;
+    text-align: center;
+    font-size: 1.5vw;
+    text-transform: uppercase;
+    margin-bottom: 5%;
+    width: 100%;
+}
+
+#how-to-play .content{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+}
+
+.nextBtn{
+    width: fit-content;
+}
+
+.content img{
+    width: 75%;
+    height: auto;
+}
+
+.nav {
+    display: flex;
+    justify-content: space-between;
+}
+
+#alert-box{
+    text-align: center;
+}
+
+@media (max-width: 768px){
+
+    .content{
+        max-width: 75%;
+    }
+
+    #title{
+        font-size: 50px;
+    }
+    .content a{
+        font-size: 20px;
+    }
+    #player-info{
+        font-size:15px;
+    }
+
+    #player-info input{
+        scale: 1.5;
+    }
+}
+
+
+

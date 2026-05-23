@@ -1,0 +1,245 @@
+@import url('https://fonts.cdnfonts.com/css/tetris');
+
+@font-face {
+    font-family: 'Pixel';
+    src: url('tetris.ttf');
+}
+
+:root{
+    background-image: url("../images/tetris-background.jpg");
+    font-family: 'Pixel';
+    touch-action: manipulation;
+}
+
+*{
+    user-select: none;
+}
+
+html, body{
+    height: 100%;
+}
+
+body {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    margin: 0;
+    text-align: center;
+}
+
+.container{
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    gap: 2%;
+    padding-bottom: 2%;
+}
+
+.grid{
+    width: 40vh;
+    height: 80vh;
+    display: flex;
+    flex-wrap: wrap;
+    box-sizing: border-box;
+}
+
+.grid div{
+    box-sizing: border-box;
+    border: 1px solid gray;
+    border-radius: 5px;
+    height: 5%;
+    width: 10%;
+}
+
+.mini-grid{
+    width: 10vh;
+    height: 10vh;
+    display: flex;
+    flex-wrap: wrap;
+    box-sizing: border-box;
+}
+
+.mini-grid div{
+    height: 25%;
+    width: 25%;
+    box-sizing: border-box;
+    border: 1px solid grey;
+    background-color: black;
+    border-radius: 3px;
+}
+
+#info{
+    padding-top: 20vh;
+    color: white;
+}
+
+#bottom {
+    border: 0;
+}
+
+.game-over{
+    width: 25vw;
+    height: fit-content;
+    padding: 3%;
+    background-color: white;
+    display: none;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    font-size: 2.5vw;
+}
+
+.game-over h1{
+    font-size: 5vw;
+    color: red;
+    margin-bottom: 3%;
+    margin-top: 0;
+}
+
+.game-over h3{
+    margin: 0;
+}
+
+.game-over span{
+    color: green;
+}
+
+.game-over a{
+    margin-top: 3%;
+    text-decoration: none;
+    color: black;
+    transition: ease 0.2s;
+}
+
+.game-over a:hover{
+    scale: 0.9;
+}
+
+.game-paused{
+    width: 30%;
+    height: 60%;
+    background-color: white;
+    display: none;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    font-size: 2vw;
+}
+
+#buttons{
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+}
+
+#buttons button{
+    margin-bottom: 10%;
+}
+
+.quit-popup{
+    text-align: center;
+}
+
+.quit-popup button{
+    flex: 1;
+}
+
+.quit-popup div{
+    display: flex;
+    justify-content: center;
+    gap: 40%;
+}
+
+#game{
+    display: flex;
+    gap: 2%;
+    padding-right: 5vw;
+}
+
+.mobile-buttons{
+    width: 100vw;
+    display: none;
+    gap: 10vw;
+    justify-content: space-between;
+}
+
+.d-pad div{
+    display: flex;
+    width: 100%;
+    align-items: center;
+    justify-content: center;
+}
+
+.d-pad button{
+    width: 30px;
+    height: 30px;
+}
+
+.a-b{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    margin-right: 10vw;
+}
+
+.a-b button{
+    width: 30px;
+    height: 30px;  
+}
+
+@media (max-width: 768px)
+{
+    .mobile-buttons{
+        display: flex;
+    }
+    
+    .d-pad{
+        margin-left: 5vw;
+    }
+
+    .a-b{
+        margin-right: 5vw;
+    }
+}
+
+@media (max-width: 570px)
+{
+
+    body{
+        justify-content: stretch;
+    }
+
+    .container{
+        flex-direction: column;
+    }
+
+    #info{
+        padding-top: 5%;
+    }
+
+    #game{
+        justify-content: center;
+        padding-left: 10%;
+    }
+
+    .grid{
+        width: 20vh;
+        height: 40vh;
+    }
+
+    .mini-grid{
+        width: 5vh;
+        height: 5vh;
+    }
+
+    .game-over{
+        font-size: 7.5vw;
+        width: 75vw;
+        height: 75vw;
+    }
+
+    .game-over h1{
+        font-size: 10vw;
+    }
+}
