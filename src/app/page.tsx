@@ -1,52 +1,156 @@
-import Image from "next/image";
+"use client";
+
+import Button from "@/components/Button";
+import { useNotifications } from "@/components/NotificationProvider";
+import Tile from "@/components/Tile";
+import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 
 export default function Home() {
-	return (
-		<div className="font-sans grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20">
-			<main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
-				<Image className="dark:invert" src="/next.svg" alt="Next.js logo" width={180} height={38} priority />
-				<ol className="font-mono list-inside list-decimal text-sm/6 text-center sm:text-left">
-					<li className="mb-2 tracking-[-.01em]">
-						Get started by editing{" "}
-						<code className="bg-black/[.05] dark:bg-white/[.06] font-mono font-semibold px-1 py-0.5 rounded">
-							src/app/page.tsx
-						</code>
-						.
-					</li>
-					<li className="tracking-[-.01em]">Save and see your changes instantly.</li>
-				</ol>
 
-				<div className="flex gap-4 items-center flex-col sm:flex-row">
-					<a
-						className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 w-full sm:w-auto md:w-[158px]"
-						href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-						target="_blank"
-						rel="noopener noreferrer"
-					>
-						Read our docs
-					</a>
-				</div>
-			</main>
-			<footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
-				<a
-					className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-					href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-					target="_blank"
-					rel="noopener noreferrer"
-				>
-					<Image aria-hidden src="/file.svg" alt="File icon" width={16} height={16} />
-					Learn
-				</a>
-				<a
-					className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-					href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-					target="_blank"
-					rel="noopener noreferrer"
-				>
-					<Image aria-hidden src="/globe.svg" alt="Globe icon" width={16} height={16} />
-					Go to nextjs.org →
-				</a>
-			</footer>
-		</div>
+    const [playerName, setPlayerName] = useState<string>("");
+
+    const { notify } = useNotifications();
+    const router = useRouter();
+
+    const handleSubmit = (e: React.FormEvent) => {
+        e.preventDefault();
+        console.log(playerName);
+
+        if (!playerName) {
+            notify("Please enter initials","error");
+            return;
+        }
+
+        router.push("/play");
+    };
+
+    useEffect(() => {
+        const name = localStorage.getItem("player");
+        setPlayerName(name ?? "");
+    }, []);    
+	
+    return (
+
+        <Tile>
+            <h1 className="
+                flex
+                text-[clamp(3rem,20vw,5rem)]!
+                font-bold
+                text-shadow-md
+                text-shadow-black 
+                w-fit
+                h-fit
+                mx-auto
+            ">
+                <span className="text-red-600">T</span>
+                <span className="text-orange-600">E</span>
+                <span className="text-yellow-600">T</span>
+                <span className="text-green-600">R</span>
+                <span className="text-blue-600">I</span>
+                <span className="text-purple-600">S</span>
+            </h1>
+
+            <form
+                onSubmit={handleSubmit}
+                className="
+                    flex 
+                    flex-col 
+                    gap-4 
+                    pb-4 
+                    border-b 
+                    border-slate-300
+                "
+            >
+                <div className="flex flex-col gap-1">
+                    <label
+                        htmlFor="initials"
+                        className="text-sm font-semibold text-slate-700"
+                    >
+                        Enter Initials
+                    </label>
+
+                    <input
+                        id="initials"
+                        name="initials"
+                        type="text"
+                        maxLength={3}
+                        value={playerName}
+                        onChange={(e) => {
+                            const name = e.target.value;
+                            setPlayerName(name);
+                            localStorage.setItem("player", name);
+                        }}
+                        placeholder="ABC"
+                        className="w-full"
+                    />
+                </div>
+
+                <Button
+                    text="Play"
+                    x={0}
+                    y={0}
+                    className="w-full"
+                    borderRadius="lg"
+                    onClick={handleSubmit}
+                />
+            </form>
+
+            <div className="
+                flex 
+                flex-col
+                gap-2
+                text-2xl
+                
+            ">
+                <div className="flex flex-col gap-1 text-lg font-bold tracking-wide">
+                    <HeroLink
+                        text="HIGH SCORES"
+                        href="/high-scores"
+                    />
+                    <HeroLink
+                        text="HOW TO PLAY"
+                        href="/how-to-play"
+                    />
+                    <HeroLink
+                        text="SETTINGS"
+                        href="/settings"
+                    />
+                    <HeroLink
+                        text="SOURCE CODE"
+                        href="https://github.com/LucaMawyin/tetris_new"
+                        target="_blank"
+                    />
+                </div>
+            </div>
+        </Tile>
 	);
+}
+
+function HeroLink(props : {
+    text: string,
+    href : string,
+    target?: "_blank" | null,
+    className?: string,
+}){
+
+    return (
+        <a  
+            href={props.href} 
+            rel="noopener noreferrer"
+            target={props.target ?? ""}
+            className={`
+                rounded-lg
+                px-3
+                py-2
+                text-slate-700
+                transition-colors,
+                hover:bg-slate-300
+                hover:text-slate-950
+                ${props.className}
+            `}
+        >
+            {props.text}
+        </a>
+    );
 }
