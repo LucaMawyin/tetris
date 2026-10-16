@@ -7,6 +7,7 @@ import { LogOut, RotateCcw, Trash2 } from "lucide-react";
 
 export default function DeleteButton({
     action,
+    onModalChange,
     className = "",
     disabled = false,
     buttonText = "",
@@ -21,11 +22,9 @@ export default function DeleteButton({
     buttonText?: string;
     actionName?: string;
     itemName?:string;
-    text?: string;
-    customText?: string;
-    customDescription?: string;
     x?: number;
     y?: number;
+    onModalChange?: (isOpen: boolean) => void;
 }) {
     const [isPending, startTransition] = useTransition();
     const [open, setOpen] = useState(false);
@@ -50,6 +49,10 @@ export default function DeleteButton({
             document.documentElement.style.overflow = "";
         };
     }, [open]);
+
+    useEffect(() => {
+        onModalChange?.(open);
+    }, [open, onModalChange]);
 
     return (
         <>
