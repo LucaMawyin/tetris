@@ -55,6 +55,10 @@ export default function Button(props: {
     fontWeight?: keyof typeof fontWeightClasses;
     borderRadius?: keyof typeof borderRadiusClasses;
     shadow?: keyof typeof shadowClasses;
+    onPointerDown?: (e: React.PointerEvent<HTMLButtonElement>) => void;
+    onPointerUp?: (e: React.PointerEvent<HTMLButtonElement>) => void;
+    onPointerLeave?: (e: React.PointerEvent<HTMLButtonElement>) => void;
+    onContextMenu?: (e: React.MouseEvent<HTMLButtonElement>) => void;
 }) {
     function clickEvent(e: React.MouseEvent<HTMLButtonElement>) {
         props.onClick?.(e);
@@ -103,6 +107,10 @@ export default function Button(props: {
                 e.stopPropagation();
                 clickEvent(e);
             }}
+            onPointerDown={props.onPointerDown}
+            onPointerUp={props.onPointerUp}
+            onPointerLeave={props.onPointerLeave}
+            onContextMenu={props.onContextMenu}
             disabled={props.disabled}
             className={`
                 ${base}

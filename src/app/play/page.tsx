@@ -4,7 +4,7 @@ import Button from "@/components/Button";
 import DeleteButton from "@/components/DeleteButton";
 import Tile from "@/components/Tile";
 import { defaultBind } from "@/lib/keybinds";
-import { LogOut, Pause, PlayIcon, RotateCcw } from "lucide-react";
+import { ArrowDown, ArrowLeft, ArrowRight, ArrowUp, LogOut, Pause, PlayIcon, RotateCcw, RotateCw } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
@@ -544,133 +544,260 @@ export default function Play(){
             justify-center
         ">
             {/* INFO MODAL */}
-            <div className={`
-                ${paused || gameOver ? "self-center" : "absolute left-50"}
-                flex
-                flex-col
-                w-fit
-                h-fit
-                gap-2
-                p-8
-                bg-(--bg)
-                rounded-2xl
-            `}>
-                {(paused && !gameOver)&& <h1>Paused</h1>}
-                {gameOver && <h1>Game Over</h1>}
-                <div>Score: {score}</div>
-                <div>Level: {level}</div>
-                <div>Lines Cleared: {lineCnt}</div>
-                <div className="flex flex-row gap-4 justify-between">
-                    {!gameOver && (
-                        <>
-                            <Button onClick={() => setPaused(value => !value)}>
-                                {paused ?  <PlayIcon size={18}/> : <Pause size={18}/>}
-                            </Button>     
+            {(paused || gameOver) && (
+                <div className={`
+                    self-center
+                    flex
+                    flex-col
+                    w-fit
+                    h-fit
+                    gap-2
+                    p-8
+                    bg-(--bg)
+                    rounded-2xl
+                `}>
+                    {(paused && !gameOver)&& <h1>Paused</h1>}
+                    {gameOver && <h1>Game Over</h1>}
+                    <div>Score: {score}</div>
+                    <div>Level: {level}</div>
+                    <div>Lines Cleared: {lineCnt}</div>
+                    <div className="flex flex-row gap-4 justify-between">
+                        {!gameOver && (
+                            <>
+                                <Button onClick={() => setPaused(value => !value)}>
+                                    {paused ?  <PlayIcon size={18}/> : <Pause size={18}/>}
+                                </Button>     
 
-                            <DeleteButton
-                                actionName="Quit"
-                                itemName="Game"
-                                action={() => router.push("/")}
-                                onModalChange={(isOpen) => {
-                                    setModalOpen(isOpen);
+                                <DeleteButton
+                                    actionName="Quit"
+                                    itemName="Game"
+                                    action={() => router.push("/")}
+                                    onModalChange={(isOpen) => {
+                                        setModalOpen(isOpen);
 
-                                    if (isOpen) {
-                                        setPaused(true);
-                                    }
-                                }}
-                            />
-                        </>
-                   
-                    )}
+                                        if (isOpen) {
+                                            setPaused(true);
+                                        }
+                                    }}
+                                />
+                            </>
+                    
+                        )}
 
-                    {gameOver && (
-                        <>
-                            <Button onClick={() => window.location.reload()}>
-                                <RotateCcw size={18} />
-                            </Button>        
+                        {gameOver && (
+                            <>
+                                <Button onClick={() => window.location.reload()}>
+                                    <RotateCcw size={18} />
+                                </Button>        
 
-                            <Button variant="red" onClick={() => router.push("/")}>
-                                <LogOut size={18}/>    
-                            </Button>                
-                        </>
+                                <Button variant="red" onClick={() => router.push("/")}>
+                                    <LogOut size={18}/>    
+                                </Button>                
+                            </>
 
-                    )}
+                        )}
 
-                </div>
-            </div>
+                    </div>
+                </div>                
+            )}
+
 
             {/* CENTERED GAME AREA */}
             {!(paused || gameOver) && (
                 <Tile className="
-                    flex 
-                    flex-row
-                    items-start
-                    w-fit!
+                    flex
+                    flex-col
+                    items-stretch
+                    justify-center
+                    w-screen
+                    sm:w-fit
                     h-fit!
-                    gap-5
+                    gap-4
+                    p-4
                     bg-(--bg)
-                    p-8
-
                 ">
-                    <div 
-                        style={{
-                            backgroundColor: backgroundColour,
-                        }}
-                        className="rounded-sm"
-                    >
-                        <div className="grid">
-                            {Array.from({ length: 200 }, (_, i) => {
-                                const isCurrent = currentSquares.has(i);
-                                const isLocked = lockedSquares.has(i);
+                    <div className="flex flex-row gap-4 justify-center">
+                        <div
+                            style={{ backgroundColor: backgroundColour }}
+                            className="w-[min(70vw,320px)] sm:w-[min(60vw,360px)] rounded-sm"
+                        >
+                            <div className="game-grid w-full">
+                                {Array.from({ length: 200 }, (_, i) => {
+                                    const isCurrent = currentSquares.has(i);
+                                    const isLocked = lockedSquares.has(i);
 
-                                return (
-                                    <div
-                                        key={i}
-                                        className={`rounded-sm ${
-                                            isCurrent || isLocked ? "tetromino" : ""
-                                        }`}
-                                        style={{
-                                            backgroundColor: isCurrent
-                                                ? colours[currentBlock]
-                                                : isLocked
-                                                    ? "#808080"
-                                                    : backgroundColour,
-                                        }}
-                                    />
-                                );
-                            })}
+                                    return (
+                                        <div
+                                            key={i}
+                                            className={`rounded-sm ${
+                                                isCurrent || isLocked ? "tetromino" : ""
+                                            }`}
+                                            style={{
+                                                backgroundColor: isCurrent
+                                                    ? colours[currentBlock]
+                                                    : isLocked
+                                                        ? "#808080"
+                                                        : backgroundColour,
+                                            }}
+                                        />
+                                    );
+                                })}
 
 
-                        </div>                        
+                            </div>                        
+                        </div>     
+
+                        {/* NEXT PIECE */}
+                        <div className="flex flex-col gap-2 self-stretch">
+                            
+                            <span className="text-sm font-medium">Next</span>
+
+                            <div
+                                className="mini-grid w-[min(17.5vw,80px)] sm:w-[min(15vw,96px)] rounded-sm"
+                                id="next-piece"
+                                style={{ backgroundColor: backgroundColour }}
+                            >
+                                {Array.from({ length: 16 }, (_, i) => {
+                                    const isNext = nextSquares.has(i);
+
+                                    return (
+                                        <div
+                                            key={i}
+                                            className={`rounded-sm ${isNext ? "tetromino" : ""}`}
+                                            style={{
+                                                backgroundColor: isNext
+                                                    ? colours[nextBlock]
+                                                    : backgroundColour ?? undefined,
+                                            }}
+                                        />
+                                    );
+                                })}
+                            </div> 
+
+                            <div className="flex flex-col w-full">
+                                <span>Score: {score}</span>
+                                <span>Level: {level}</span>
+                                <span>Lines: {lineCnt}</span>
+                            </div>    
+
+                            <div className="flex flex-col gap-2 mt-auto">
+                                <Button 
+                                    className="w-full"
+                                    onClick={() => setPaused(value => !value)}
+                                >
+                                    {paused ?  <PlayIcon size={18}/> : <Pause size={18}/>}
+                                </Button>     
+
+                                <DeleteButton
+                                    actionName="Quit"
+                                    itemName="Game"
+                                    action={() => router.push("/")}
+                                    onModalChange={(isOpen) => {
+                                        setModalOpen(isOpen);
+
+                                        if (isOpen) {
+                                            setPaused(true);
+                                        }
+                                    }}
+                                    className="w-full"
+                                />
+                            </div>
+                        </div>    
                     </div>
+
 
                     
-                    {/* NEXT PIECE */}
-                    <div 
-                        className="mini-grid rounded-sm" 
-                        id="next-piece"
-                        style={{
-                            backgroundColor: backgroundColour,
-                        }}
-                    >
-                        {Array.from({ length: 16 }, (_, i) => {
-                            const isNext = nextSquares.has(i);
+               
 
-                            return (
-                                <div
-                                    key={i}
-                                    className={`rounded-sm ${isNext ? "tetromino" : ""}`}
-                                    style={{
-                                        backgroundColor: isNext
-                                            ? colours[nextBlock]
-                                            : backgroundColour ?? undefined,
+                        {/* MOBILE BUTTONS */}
+                        <div className="
+                            flex
+                            w-full
+                            items-center
+                            justify-between
+                            gap-3
+                            px-1
+                            py-3
+                            md:hidden
+                        ">
+
+                            {/* D-PAD */}
+                            <div className="grid w-fit grid-cols-3 justify-items-center">
+                                <div />
+                                <Button
+                                    onClick={hardDrop}
+                                    x={2}
+                                    y={2}
+                                    borderRadius="lg"
+                                >
+                                    <ArrowUp size={16}/>
+                                </Button>
+                                <div />
+
+                                <Button
+                                    onClick={moveLeft}
+                                    x={2}
+                                    y={2}
+                                    borderRadius="lg"
+                                >
+                                    <ArrowLeft size={16}/>
+                                </Button>
+                                <div />
+
+
+                                <Button
+                                    onClick={moveRight}
+                                    x={2}
+                                    y={2}
+                                    borderRadius="lg"
+                                >
+                                    <ArrowRight size={16}/>
+                                </Button>
+
+                                <div />
+                                <Button
+                                    onPointerDown={(e) => {
+                                        e.preventDefault();
+                                        startSoftDrop();
                                     }}
-                                />
-                            );
-                        })}
-                    </div>
+                                    onPointerUp={unSoftDrop}
+                                    onPointerLeave={unSoftDrop}
+                                    onContextMenu={(e) => e.preventDefault()}
+                                    x={2}
+                                    y={2}
+                                    borderRadius="lg"
+                                >
+                                    <ArrowDown size={16} />
+                                </Button>
+                                <div />
+                            </div>
 
+                            {/* ROTATION BUTTONS */}
+                            <div className="grid w-fit grid-cols-2">
+                                <div />
 
+                                <Button
+                                    onClick={rotateClockwise}
+                                    x={2}
+                                    y={2}
+                                    borderRadius="lg"
+                                >
+                                    <RotateCw size={16} />
+                                </Button>
+
+                                <Button
+                                    onClick={rotateCounterClockwise}
+                                    x={2}
+                                    y={2}
+                                    borderRadius="lg"
+                                >
+                                    <RotateCcw size={16} />
+                                </Button>
+
+                                <div />
+                            </div>
+
+                        </div>
                 </Tile>                
             )}
 
