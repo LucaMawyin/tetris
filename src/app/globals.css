@@ -78,7 +78,6 @@ input:focus{
     grid-template-columns: repeat(4, minmax(0, 1fr));
     grid-template-rows: repeat(4, minmax(0, 1fr));
     aspect-ratio: 1 / 1;
-    width: 100%;
 }
 
 .mini-grid > div {

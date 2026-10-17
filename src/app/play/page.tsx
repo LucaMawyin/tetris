@@ -77,6 +77,25 @@ const nextPieceList = [
 const shapes = [shape_L, shape_J, shape_T, shape_S, shape_Z, shape_I, shape_O];
 const colours = ["#ffb700", "#0000ff", "#a000ff", "#00ff00", "#ff0000", "#00ffee", "#ffe900"];
 
+type Piece = {
+    block: number;
+    rotation: number;
+    squares: number[];
+};
+
+function createRandomPiece(): Piece {
+    const block = Math.floor(Math.random() * shapes.length);
+    const rotation = Math.floor(
+        Math.random() * shapes[block].length
+    );
+
+    return {
+        block,
+        rotation,
+        squares: shapes[block][rotation],
+    };
+}
+
 
 export default function Play(){
 
@@ -103,35 +122,28 @@ export default function Play(){
     const [softDrop, setSoftDrop] = useState(false);
 
 
-    const [nextBlock, setNextBlock] = useState(0);
-    const [nextRotation, setNextRotation] = useState(0);
-
-    const [nextPiece, setNextPiece] = useState<number[]>([]);
+    const [nextPieces, setNextPieces] = useState<Piece[]>([]);
+    useEffect(() => {
+        setNextPieces(
+            Array.from({ length: 3 }, createRandomPiece)
+        );
+    }, []);
 
     const currentSquares = new Set(
         current.map(index => currentPosition + index)
     );
 
-    const nextSquares = new Set(nextPieceList[nextBlock]);
-
-    useEffect(() => {
-        const blockIndex = Math.floor(Math.random() * shapes.length);
-        const rotation = Math.floor(Math.random() * shapes[blockIndex].length);
-
-        setNextBlock(blockIndex);
-        setNextRotation(rotation);
-        setNextPiece(shapes[blockIndex][rotation]);
-    }, []);
-
 
     // Block generation
     function spawn() {
         const spawnPosition = 3;
-        const piece = nextPiece;
+        const piece = nextPieces[0];
+
+        if (!piece) return;
 
         // Check whether the new piece overlaps locked squares
         if (
-            piece.some(index =>
+            piece.squares.some(index =>
                 lockedSquares.has(spawnPosition + index)
             )
         ) {
@@ -140,19 +152,15 @@ export default function Play(){
         }
 
         setCurrentPosition(spawnPosition);
-        setCurrentBlock(nextBlock);
-        setCurrentRotation(nextRotation);
-        setCurrent(piece);
+        setCurrentBlock(piece.block);
+        setCurrentRotation(piece.rotation);
+        setCurrent(piece.squares);
 
-        // Generate the next piece
-        const newNextBlock = Math.floor(Math.random() * shapes.length);
-        const newNextRotation = Math.floor(
-            Math.random() * shapes[newNextBlock].length
-        );
-
-        setNextBlock(newNextBlock);
-        setNextRotation(newNextRotation);
-        setNextPiece(shapes[newNextBlock][newNextRotation]);
+        // Remove the spawned piece and add a new piece to the queue
+        setNextPieces([
+            ...nextPieces.slice(1),
+            createRandomPiece(),
+        ]);
     }
 
     // Collision detection
@@ -652,27 +660,43 @@ export default function Play(){
                             
                             <span className="text-sm font-medium">Next</span>
 
-                            <div
-                                className="mini-grid w-[min(17.5vw,80px)] sm:w-[min(15vw,96px)] rounded-sm"
-                                id="next-piece"
-                                style={{ backgroundColor: backgroundColour }}
-                            >
-                                {Array.from({ length: 16 }, (_, i) => {
-                                    const isNext = nextSquares.has(i);
 
-                                    return (
+                            {nextPieces.map((piece, index) => {
+                                const previewSquares = new Set(
+                                    nextPieceList[piece.block]
+                                );
+
+                                return (
+                                    <div
+                                        key={index}
+                                        className="flex flex-col gap-1"
+                                    >
+
                                         <div
-                                            key={i}
-                                            className={`rounded-sm ${isNext ? "tetromino" : ""}`}
-                                            style={{
-                                                backgroundColor: isNext
-                                                    ? colours[nextBlock]
-                                                    : backgroundColour ?? undefined,
-                                            }}
-                                        />
-                                    );
-                                })}
-                            </div> 
+                                            className="mini-grid w-[min(17.5vw,80px)] sm:w-[min(15vw,96px)] rounded-sm"
+                                            style={{ backgroundColor: backgroundColour }}
+                                        >
+                                            {Array.from({ length: 16 }, (_, i) => {
+                                                const isNext = previewSquares.has(i);
+
+                                                return (
+                                                    <div
+                                                        key={i}
+                                                        className={`rounded-sm ${
+                                                            isNext ? "tetromino" : ""
+                                                        }`}
+                                                        style={{
+                                                            backgroundColor: isNext
+                                                                ? colours[piece.block]
+                                                                : backgroundColour,
+                                                        }}
+                                                    />
+                                                );
+                                            })}
+                                        </div>
+                                    </div>
+                                );
+                            })}
 
                             <div className="flex flex-col w-full">
                                 <span>Score: {score}</span>
@@ -680,28 +704,12 @@ export default function Play(){
                                 <span>Lines: {lineCnt}</span>
                             </div>    
 
-                            <div className="flex flex-col gap-2 mt-auto">
-                                <Button 
-                                    className="w-full"
-                                    onClick={() => setPaused(value => !value)}
-                                >
-                                    {paused ?  <PlayIcon size={18}/> : <Pause size={18}/>}
-                                </Button>     
-
-                                <DeleteButton
-                                    actionName="Quit"
-                                    itemName="Game"
-                                    action={() => router.push("/")}
-                                    onModalChange={(isOpen) => {
-                                        setModalOpen(isOpen);
-
-                                        if (isOpen) {
-                                            setPaused(true);
-                                        }
-                                    }}
-                                    className="w-full"
-                                />
-                            </div>
+                            <Button 
+                                className="mt-auto w-full"
+                                onClick={() => setPaused(value => !value)}
+                            >
+                                {paused ?  <PlayIcon size={18}/> : <Pause size={18}/>}
+                            </Button>     
                         </div>    
                     </div>
 
