@@ -118,7 +118,7 @@ export default function Home() {
                     />
                     <HeroLink
                         text="SOURCE CODE"
-                        href="https://github.com/LucaMawyin/tetris_new"
+                        href="https://github.com/LucaMawyin/tetris"
                         target="_blank"
                     />
                 </div>
