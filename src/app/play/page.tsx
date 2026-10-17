@@ -6,7 +6,7 @@ import Tile from "@/components/Tile";
 import { defaultBind } from "@/lib/keybinds";
 import { ArrowDown, ArrowLeft, ArrowRight, ArrowUp, LogOut, Pause, PlayIcon, RotateCcw, RotateCw } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 // Default values
 const MAX_LEVEL = 10;
@@ -83,6 +83,11 @@ type Piece = {
     squares: number[];
 };
 
+type HighScore = {
+    name: string;
+    score: number;
+};
+
 function createRandomPiece(): Piece {
     const block = Math.floor(Math.random() * shapes.length);
     const rotation = Math.floor(
@@ -104,6 +109,11 @@ export default function Play(){
     const [playerName, setPlayerName] = useState("");
     const [paused, setPaused] = useState(false);
     const [modalOpen, setModalOpen] = useState(false);
+
+    const [score, setScore] = useState(0);
+    const [lineCnt, setLineCnt] = useState(0);
+    const [level, setLevel] = useState(0);
+    const [isHighScore, setIsHighScore] = useState(false);
 
     const isGamePaused = paused || modalOpen;
     const [backgroundColour, setBackgroundColour] = useState("");
@@ -132,6 +142,56 @@ export default function Play(){
     const currentSquares = new Set(
         current.map(index => currentPosition + index)
     );
+
+    const scoreSaved = useRef(false);
+
+    useEffect(() => {
+        if (!gameOver || scoreSaved.current) return;
+
+        scoreSaved.current = true;
+
+        const name = localStorage.getItem("player")?.trim() || "Anonymous";
+
+        let highScores: HighScore[] = [];
+
+        try {
+            const saved = localStorage.getItem("highScores");
+            const parsed: unknown = saved ? JSON.parse(saved) : [];
+
+            if (Array.isArray(parsed)) {
+                highScores = parsed.filter(
+                    (entry): entry is HighScore =>
+                        entry !== null &&
+                        typeof entry === "object" &&
+                        typeof entry.name === "string" &&
+                        typeof entry.score === "number" &&
+                        Number.isFinite(entry.score)
+                );
+            }
+        } catch {
+            highScores = [];
+        }
+
+        highScores.sort((a, b) => b.score - a.score);
+
+        const qualifies =
+            highScores.length < 10 ||
+            score > highScores[9].score;
+
+        if (qualifies) {
+            highScores.push({ name, score });
+
+            highScores.sort((a, b) => b.score - a.score);
+            highScores = highScores.slice(0, 10);
+
+            localStorage.setItem(
+                "highScores",
+                JSON.stringify(highScores)
+            );
+
+            setIsHighScore(true);
+        }
+    }, [gameOver, score]);
 
 
     // Block generation
@@ -309,10 +369,6 @@ export default function Play(){
         setLockedSquares(clearedSquares);
         spawn();
     }
-
-    const [score, setScore] = useState(0);
-    const [lineCnt, setLineCnt] = useState(0);
-    const [level, setLevel] = useState(0);
 
     // Clear line & update level + score 
     function clearLine(occupiedSquares: Set<number>): Set<number> {
@@ -565,7 +621,20 @@ export default function Play(){
                     rounded-2xl
                 `}>
                     {(paused && !gameOver)&& <h1>Paused</h1>}
-                    {gameOver && <h1>Game Over</h1>}
+                    {gameOver && (
+                        <>
+                            <h1>Game Over</h1>
+
+                            {isHighScore && (
+                                <div className="rounded-lg bg-green-500/20 p-3 text-center">
+                                    <h2 className="font-bold text-green-700">
+                                        New High Score!
+                                    </h2>
+                                    <p>You made the top 10 leaderboard!</p>
+                                </div>
+                            )}
+                        </>
+                    )}
                     <div>Score: {score}</div>
                     <div>Level: {level}</div>
                     <div>Lines Cleared: {lineCnt}</div>
